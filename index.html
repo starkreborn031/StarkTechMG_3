@@ -1,0 +1,74 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Empresa de Informática</title>
+</head>
+
+<body>
+    <h1>Bem-vindo à Minha Empresa de Informática</h1>
+
+    <!-- Adicione um formulário simples para cadastrar clientes -->
+    <form id="clienteForm">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <button type="submit">Cadastrar Cliente</button>
+    </form>
+
+    <!-- Div para exibir a lista de clientes -->
+    <div id="listaClientes"></div>
+
+    <script>
+        // Adicione o código do frontend diretamente aqui
+        // Vincula a função de cadastro ao formulário
+        document.getElementById('clienteForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+
+            try {
+                // Envia uma requisição POST para cadastrar um novo cliente
+                const response = await fetch('http://localhost:3000/clientes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nome, email }),
+                });
+
+                const data = await response.json();
+                console.log('Novo cliente cadastrado:', data);
+
+                // Atualiza a lista após cadastrar
+                listarClientes();
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        // Função para listar todos os clientes
+        const listarClientes = async () => {
+            try {
+                // Envia uma requisição GET para obter a lista de clientes
+                const response = await fetch('http://localhost:3000/clientes');
+                const listaClientes = (await response.json()).map(cliente => `${cliente.nome} - ${cliente.email}`).join('<br>');
+                document.getElementById('listaClientes').innerHTML = `<h2>Lista de Clientes:</h2>${listaClientes}`;
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        // Lista os clientes ao carregar a página
+        listarClientes();
+    </script>
+</body>
+
+</html>
